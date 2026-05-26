@@ -50,13 +50,14 @@ def listar_produtos():
 def remover_produto(id_produto):
     conexao, cursor = conectar_banco()
     
-    # DELETE aqui
     
+    cursor.execute("DELETE FROM produtos WHERE id = ?", (id_produto,))
+    conexao.commit()
+
     if cursor.rowcount > 0:
         print(f"🗑️ Produto com ID {id_produto} foi removido.")
     else:
-        print(f"❌ Erro: Não foi encontrado nenhum produto com o ID {id_produto}.")
-        
+        print(f"❌ Erro: Não foi encontrado nenhum produto com o ID {id_produto}.")   
     conexao.close()
 
 
@@ -72,5 +73,15 @@ if __name__ == "__main__":
     cadastrar_produto("Whopper", 35.90)
     cadastrar_produto("Chicken Duplo", 20.90)
     cadastrar_produto("Batata Media", 10.90)
+    cadastrar_produto("Mega Stacker Cheddar 3.0", 40.90)
+
+    # listar o que foi cadastrado
+    listar_produtos()
+
+    # Remove o produto de ID 2
+    remover_produto(2)
+
+    # lista novamente pra ver se o produto saiu
+    listar_produtos()
     
     
