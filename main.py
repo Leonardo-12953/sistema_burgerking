@@ -43,7 +43,14 @@ def listar_produtos():
     print("         MENU ATUAL")
     print("="*30)
     for prod in produtos:
-        print(f"ID: {prod[0]} | {prod[1]} - R$ {prod[2]:.2f}")
+        nome = prod[1]
+        preco = prod[2]
+
+        # Se o nome passar de 18 caracteres vai truncar
+        if len(nome) > 18:
+            nome = nome[:17] + "…"
+
+        print(f"ID: {prod[0]} | {nome:<18} - R$ {preco:>7.2f}")
     print("="*30 + "\n")
 
 
