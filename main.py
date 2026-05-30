@@ -39,9 +39,9 @@ def listar_produtos():
         print("\nℹ️ O menu está vazio.")
         return
         
-    print("\n" + "="*30)
+    print("\n" + "="*39)
     print("         MENU ATUAL")
-    print("="*30)
+    print("="*39)
     for prod in produtos:
         nome = prod[1]
         preco = prod[2]
@@ -51,7 +51,7 @@ def listar_produtos():
             nome = nome[:17] + "…"
 
         print(f"ID: {prod[0]} | {nome:<18} - R$ {preco:>7.2f}")
-    print("="*30 + "\n")
+    print("="*39 + "\n")
 
 
 def remover_produto(id_produto):
