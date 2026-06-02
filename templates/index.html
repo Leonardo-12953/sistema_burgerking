@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger King - PDV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+    <div class="container">
+
+        <!-- PAINEL ESQUERDO - PRODUTOS -->
+         <div class="painel-esquerdo">
+            <div class="search-bar">
+                <input type="text" id="busca" placeholder="🔍 Buscar produto...">
+            </div>
+
+            <div class="grid-produtos" id="grid-produtos">
+                <!-- Cards gerados pelo script.js -->
+            </div>
+         </div>
+
+         <!-- PAINEL DIREITO - PEDIDO -->
+          <div class="painel-direito">
+            <h2 id="total-itens">0 itens</h2>
+
+            <div class="lista-pedido" id="lista-pedido">
+                <!-- Itens adicionados aparecem aqui -->
+            </div>
+
+            <div class="resumo">
+                <p>Subtotal: <span id="subtotal">R$ 0,00</span></p>
+                <p>Taxa de serviço: <span id="taxa">R$ 0,00</span></p>
+                <hr>
+                <p class="total">Total: <span id="total">R$ 0,00</span></p>
+            </div>
+
+            <button class="btn-pagar" id="btn-pagar">PAGAR</button>
+          </div> 
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
