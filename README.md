@@ -17,10 +17,15 @@ Desenvolvido com Python, Flask, HTML, CSS e JavaScript.
 
 sistema_burgerking/
 ├── app.py              # Backend Flask com as rotas da API
-├── drive_thru.db       # Banco de dados SQLite
+├── drive_thru.db       # Banco de dados SQLite (gerado automaticamente)
 ├── templates/
 │   └── index.html      # Interface principal do PDV
 ├── static/
+│   ├── img/
+│   │   ├── lanches/
+│   │   ├── bebidas/
+│   │   ├── sobremesas/
+│   │   └── molho/
 │   ├── style.css       # Estilização da interface
 │   └── script.js       # Lógica do frontend
 ├── .gitignore
@@ -36,6 +41,7 @@ sistema_burgerking/
   - [x] Listar produtos
   - [x] Remover produto
 - [x] Estrutura do frontend (HTML base)
+- [x] Pac de imagens do cardápio
 
 ---
 
