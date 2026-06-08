@@ -85,5 +85,21 @@ document.getElementById('busca').addEventListener('input', async function () {
 });
 
 
+// botão finalizar
+
+const btn_pagar = document.getElementById('btn-pagar');
+
+btn_pagar.addEventListener('click', () => {
+    console.log(pedido);
+    
+    fetch('/pedido', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pedido)
+    });
+});
+
 
 carregarProdutos();

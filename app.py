@@ -8,15 +8,37 @@ def conectar_banco():
     conexao = sqlite3.connect("drive_thru.db")
     conexao.row_factory = sqlite3.Row
     cursor = conexao.cursor()
+
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS produtos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL UNIQUE,
-        preco REAL NOT NULL,
-        categoria TEXT DEFAULT 'lanches',
-        imagem TEXT DEFAULT 'default.png'
-    )
-""")
+        CREATE TABLE IF NOT EXISTS produtos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL UNIQUE,
+            preco REAL NOT NULL,
+            categoria TEXT DEFAULT 'lanches',
+            imagem TEXT DEFAULT 'default.png'
+            )
+        """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS pedidos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total REAL NOT NULL,
+            data_hora TEXT NOT NULL
+            )
+        """)
+    
+    cursor.execute(""" 
+        CREATE TABLE IF NOT EXISTS itens_pedido (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            pedido_id INTEGER NOT NULL,
+            produto_id INTEGER NOT NULL,
+            nome TEXT NOT NULL,
+            preco REAL NOT NULL,
+            quantidade INTEGER NOT NULL,
+            FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+            )
+        """)
+
     conexao.commit()
     return conexao, cursor
 
@@ -121,6 +143,14 @@ def banco_produtos():
     conexao.commit()
     conexao.close()
     return jsonify({"mensagem": f"{inseridos} produtos cadastrados com sucesso!"})
+
+
+@app.route("/pedido", methods=["POST"])
+def pedido():
+    dados = request.get_json()
+    print(dados)
+
+    return jsonify({"mensagem": "rota funcionando"})
 
 if __name__ == "__main__":
     conectar_banco()
