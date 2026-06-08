@@ -42,15 +42,15 @@ sistema_burgerking/
   - [x] Remover produto
 - [x] Estrutura do frontend (HTML base)
 - [x] Pac de imagens do cardápio
+- [x] Estilização completa do PDV (style.css)
+- [x] Grid de produtos com cards clicáveis (script.js)
+- [x] Carrinho de pedidos (adicionar/remover itens)
+- [x] Cálculo de subtotal e total
 
 ---
 
 ## 🚧 Próximos passos
 
-- [ ] Estilização completa do PDV (style.css)
-- [ ] Grid de produtos com cards clicáveis (script.js)
-- [ ] Carrinho de pedidos (adicionar/remover itens)
-- [ ] Cálculo de subtotal e total
 - [ ] Botão de finalizar pedido
 - [ ] Tabela de pedidos no banco de dados
 - [ ] Histórico / relatório de vendas
