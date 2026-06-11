@@ -3,7 +3,7 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# CONFIGURAÇÃO E CONEXÃO DO BANCO DE DADOS
+
 def conectar_banco():
     conexao = sqlite3.connect("drive_thru.db")
     conexao.row_factory = sqlite3.Row
@@ -146,12 +146,45 @@ def banco_produtos():
 
 
 @app.route("/pedido", methods=["POST"])
-def pedido():
-    dados = request.get_json()
-    print(dados)
+def finalizar_pedido():
+    itens = request.get_json()
 
-    return jsonify({"mensagem": "rota funcionando"})
+    # verifica se o carinho não está vazio
+    if not itens:
+        return jsonify({"erro": "Carrinho vazio!"}), 400
 
+    # calcula o total
+    subtotal = sum(item["preco"] * item["quantidade"] for item in itens)
+    taxa = 5.00
+    total = subtotal + taxa
+
+    # pega a data e hora atual
+    from datetime import datetime
+    data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    conexao, cursor = conectar_banco()
+
+    # salva o pedido na tabela pedidos
+    cursor.execute(
+        "INSERT INTO pedidos (total, data_hora) VALUES (?, ?)",
+        (total, data_hora)
+    )
+    pedido_id = cursor.lastrowid # pega o id do pedido recém criado
+
+    # salva cada item na tabela itens_pedido
+    for item in itens:
+        cursor.execute(
+            "INSERT INTO itens_pedido (pedido_id, produto_id, nome, preco, quantidade) VALUES (?, ?, ?, ?, ?)",
+            (pedido_id, item["id"], item["nome"], item["preco"], item["quantidade"])
+        )
+    
+    conexao.commit()
+    conexao.close()
+
+    return jsonify({
+        "mensagem": f"Pedido #{pedido_id} finalizado com sucesso!",
+        "total": total
+    }), 201
 if __name__ == "__main__":
     conectar_banco()
     app.run(debug=True)
