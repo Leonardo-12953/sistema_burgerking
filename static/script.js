@@ -88,17 +88,30 @@ document.getElementById('busca').addEventListener('input', async function () {
 // botão finalizar
 
 const btn_pagar = document.getElementById('btn-pagar');
-
-btn_pagar.addEventListener('click', () => {
-    console.log(pedido);
+btn_pagar.addEventListener('click', async () => {
     
-    fetch('/pedido', {
+    if (pedido.length === 0) {
+        alert('Carrinho vazio!');
+        return;
+    }
+
+    const resposta = await fetch('/pedido', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(pedido)
     });
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+        pedido = [];
+        atualizarPainel();
+        alert(`${dados.mensagem}\nTotal: R$ ${dados.total.toFixed(2).replace('.', ',')}`);
+    } else {
+        alert('Erro ao finalizar o pedido!');
+    }
 });
 
 
