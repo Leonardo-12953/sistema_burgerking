@@ -15,8 +15,8 @@ function montarGrid(produtos) {
         card.classList.add('card-produto');
         card.innerHTML = `
             <img src="/static/img/${produto.categoria}/${produto.imagem}" 
-                 onerror="this.src='/static/img/default.png'" 
-                 alt="${produto.nome}">
+            onerror="this.onerror=null; this.src='/static/img/default.png'" 
+            alt="${produto.nome}">
             <span>${produto.nome}</span>
             <strong>R$ ${produto.preco.toFixed(2).replace('.', ',')}</strong>
         `;
@@ -24,6 +24,35 @@ function montarGrid(produtos) {
         grid.appendChild(card);
     });
 }
+
+// FILTRO POR CATEGORIA
+
+const botoesCategoria = document.querySelectorAll('.cat-btn');
+
+botoesCategoria.forEach(botao => {
+    botao.addEventListener('click', async () => {
+
+        // 1. Remove a classe "ativo" de todos os botões
+        botoesCategoria.forEach(b => b.classList.remove('ativo'));
+
+        // 2. Adiciona "ativo" só no botão clicado
+        botao.classList.add('ativo');
+
+        // 3. Busca a categoria escolhida
+        const categoria = botao.dataset.categoria;
+
+        // 4. Busca todos os produtos da API
+        const resposta = await fetch('/produtos');
+        const produtos = await resposta.json();
+
+        // 5. Filtra (ou mostra todos)
+        const filtrados = categoria === 'todos'
+            ? produtos
+            : produtos.filter(p => p.categoria === categoria);
+
+        montarGrid(filtrados);
+    });
+});
 
 // gerencia 
 

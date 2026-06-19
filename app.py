@@ -119,10 +119,10 @@ def banco_produtos():
         ("BK Shake Crocante", 16.90, "bebidas", "BK_Shake_Crocante.png"),
         ("BK Shake Morango", 16.90, "bebidas", "BK_Shake_Morango.png"),
         # sobremesas
-        ("BK Mix Brownie", 14.90, "sobremesa", "BK_Mix_Brownie.png"),
-        ("BK Mix Nutella", 14.90, "sobremesa", "BK_Mix_LeitePo_Nutella.png"),
-        ("BK Mix Ovomaltine", 14.90, "sobremesa", "BK_Mix_Ovomaltine.png"),
-        ("Casquinha Baunilha", 6.90, "sobremesa", "Casquinha_Baunilha.png"),
+        ("BK Mix Brownie", 14.90, "sobremesas", "BK_Mix_Brownie.png"),
+        ("BK Mix Nutella", 14.90, "sobremesas", "BK_Mix_LeitePo_Nutella.png"),
+        ("BK Mix Ovomaltine", 14.90, "sobremesas", "BK_Mix_Ovomaltine.png"),
+        ("Casquinha Baunilha", 6.90, "sobremesas", "Casquinha_Baunilha.png"),
         # molhos
         ("Baconese", 2.90, "molhos", "Baconese.png"),
         ("Maionese", 2.90, "molhos", "Maionese.png"),
