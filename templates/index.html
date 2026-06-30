@@ -16,6 +16,14 @@
                 <input type="text" id="busca" placeholder="🔍 Buscar produto...">
             </div>
 
+            <div class="categorias" id="categorias">
+                <button class="cat-btn ativo" data-categoria="todos">Todos</button>
+                <button class="cat-btn" data-categoria="lanches">Lanches</button>
+                <button class="cat-btn" data-categoria="bebidas">Bebidas</button>
+                <button class="cat-btn" data-categoria="sobremesas">Sobremesas</button>
+                <button class="cat-btn" data-categoria="molhos">Molhos</button>
+            </div>
+
             <div class="grid-produtos" id="grid-produtos">
                 <!-- Cards gerados pelo script.js -->
             </div>
@@ -35,7 +43,9 @@
                 <hr>
                 <p class="total">Total: <span id="total">R$ 0,00</span></p>
             </div>
-
+            <div class="campo-nome">
+                <input type="text" id="nome-cliente" placeholder="Nome do cliente (opcional)">
+            </div>
             <button class="btn-pagar" id="btn-pagar">PAGAR</button>
           </div> 
 

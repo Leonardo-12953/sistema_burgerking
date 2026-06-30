@@ -3,7 +3,7 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# CONFIGURAÇÃO E CONEXÃO DO BANCO DE DADOS
+
 def conectar_banco():
     conexao = sqlite3.connect("drive_thru.db")
     conexao.row_factory = sqlite3.Row
@@ -22,6 +22,7 @@ def conectar_banco():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cliente TEXT,
             total REAL NOT NULL,
             data_hora TEXT NOT NULL
             )
@@ -81,8 +82,16 @@ def remover_produto(id):
         return jsonify({"mensagem": f"🗑️ Produto {id} removido."})
     return jsonify({"erro": "Produto não encontrado."}), 404
 
-@app.route("/banco_produtos")
-def banco_produtos():
+
+def popular_banco_se_vazio():
+    conexao, cursor = conectar_banco()
+    cursor.execute("SELECT COUNT(*) FROM produtos")
+    total = cursor.fetchone()[0]
+
+    if total > 0:
+        conexao.close()
+        return # caso já tenha produto cadastrado não fazer nada.
+
     produtos = [
         # lanches
         ("Whopper", 35.90, "lanches", "Whopper.png"),
@@ -119,39 +128,121 @@ def banco_produtos():
         ("BK Shake Crocante", 16.90, "bebidas", "BK_Shake_Crocante.png"),
         ("BK Shake Morango", 16.90, "bebidas", "BK_Shake_Morango.png"),
         # sobremesas
-        ("BK Mix Brownie", 14.90, "sobremesa", "BK_Mix_Brownie.png"),
-        ("BK Mix Nutella", 14.90, "sobremesa", "BK_Mix_LeitePo_Nutella.png"),
-        ("BK Mix Ovomaltine", 14.90, "sobremesa", "BK_Mix_Ovomaltine.png"),
-        ("Casquinha Baunilha", 6.90, "sobremesa", "Casquinha_Baunilha.png"),
+        ("BK Mix Brownie", 14.90, "sobremesas", "BK_Mix_Brownie.png"),
+        ("BK Mix Nutella", 14.90, "sobremesas", "BK_Mix_LeitePo_Nutella.png"),
+        ("BK Mix Ovomaltine", 14.90, "sobremesas", "BK_Mix_Ovomaltine.png"),
+        ("Casquinha Baunilha", 6.90, "sobremesas", "Casquinha_Baunilha.png"),
         # molhos
         ("Baconese", 2.90, "molhos", "Baconese.png"),
         ("Maionese", 2.90, "molhos", "Maionese.png"),
         ("Maionese Temperada", 2.90, "molhos", "Sache_Maionese_Temperada.png"),
     ]
 
-    conexao, cursor = conectar_banco()
-    inseridos = 0
+    
     for nome, preco, categoria, imagem in produtos:
         try:
             cursor.execute(
                 "INSERT INTO produtos (nome, preco, categoria, imagem) VALUES (?, ?, ?, ?)",
                 (nome, preco, categoria, imagem)
             )
-            inseridos += 1
         except sqlite3.IntegrityError:
             pass
+
     conexao.commit()
     conexao.close()
-    return jsonify({"mensagem": f"{inseridos} produtos cadastrados com sucesso!"})
+    print("Banco populado automaticamente!")
 
+def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
+    largura = 42 # caracteres para simular 80mm
+
+    linhas = []
+    linhas.append("BURGER KING".center(largura))
+    linhas.append("Sistema de Drive-Thru".center(largura))
+    linhas.append("-" * largura)
+
+    linhas.append("")
+    linhas.append(f"Pedido #{pedido_id}".center(largura))
+    if cliente:
+        linhas.append("")
+        linhas.append(f"{cliente.upper()}".center(largura))
+        linhas.append("")
+    linhas.append(data_hora.center(largura))
+    linhas.append("-" * largura)
+
+    for item in itens:
+        nome = f"{item['quantidade']}x {item['nome']}"
+        preco_total = item['preco'] * item['quantidade']
+        preco_str = f"{preco_total:.2f}".replace('.', ',')
+        espacos = largura - len(nome) - len(preco_str)
+        linhas.append(nome + " " * espacos + preco_str)
+
+    linhas.append("-" * largura)
+
+    subtotal_str = f"{subtotal:.2f}".replace('.', ',')
+    taxa_str = f"{taxa:.2f}".replace('.', ',')
+    total_str = f"R$ {total:.2f}".replace('.', ',')
+
+    linhas.append("Subtotal" + " " * (largura - 8 - len(subtotal_str)) + subtotal_str)
+    linhas.append("Taxa servico" + " " * (largura - 12 - len(taxa_str)) + taxa_str)
+    linhas.append("TOTAL" + " " * (largura - 5 - len(total_str)) + total_str)
+    linhas.append("-" * largura)
+
+    linhas.append("Obrigado pela preferencia!".center(largura))
+    linhas.append("Volte sempre".center(largura))
+
+    texto_cupom = "\n".join(linhas)
+
+    nome_arquivo = f"notas_pedidos/pedido_{pedido_id}.txt"
+    with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(texto_cupom)
+
+    return nome_arquivo
 
 @app.route("/pedido", methods=["POST"])
-def pedido():
+def finalizar_pedido():
     dados = request.get_json()
-    print(dados)
+    cliente = dados.get("cliente", "")
+    itens = dados.get("itens", [])
 
-    return jsonify({"mensagem": "rota funcionando"})
+    # verifica se o carinho não está vazio
+    if not itens:
+        return jsonify({"erro": "Carrinho vazio!"}), 400
 
+    # calcula o total
+    subtotal = sum(item["preco"] * item["quantidade"] for item in itens)
+    taxa = 5.00
+    total = subtotal + taxa
+
+    # pega a data e hora atual
+    from datetime import datetime
+    data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    conexao, cursor = conectar_banco()
+
+    # salva o pedido na tabela pedidos
+    cursor.execute(
+        "INSERT INTO pedidos (cliente, total, data_hora) VALUES (?, ?, ?)",
+        (cliente, total, data_hora)
+    )
+    pedido_id = cursor.lastrowid # pega o id do pedido recém criado
+
+    # salva cada item na tabela itens_pedido
+    for item in itens:
+        cursor.execute(
+            "INSERT INTO itens_pedido (pedido_id, produto_id, nome, preco, quantidade) VALUES (?, ?, ?, ?, ?)",
+            (pedido_id, item["id"], item["nome"], item["preco"], item["quantidade"])
+        )
+    
+    conexao.commit()
+    conexao.close()
+
+    gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora)
+
+    return jsonify({
+        "mensagem": f"Pedido #{pedido_id} finalizado com sucesso!",
+        "total": total
+    }), 201
 if __name__ == "__main__":
     conectar_banco()
+    popular_banco_se_vazio()
     app.run(debug=True)

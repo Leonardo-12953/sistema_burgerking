@@ -1,0 +1,19 @@
+               BURGER KING                
+          Sistema de Drive-Thru           
+------------------------------------------
+
+                Pedido #1                 
+
+                   LÉO                    
+
+           30/06/2026 17:29:45            
+------------------------------------------
+1x Whopper Rodeio                    38,90
+1x King Fraldinha                    39,90
+------------------------------------------
+Subtotal                             78,80
+Taxa servico                          5,00
+TOTAL                             R$ 83,80
+------------------------------------------
+        Obrigado pela preferencia!        
+               Volte sempre               
