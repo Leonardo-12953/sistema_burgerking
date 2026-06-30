@@ -81,8 +81,16 @@ def remover_produto(id):
         return jsonify({"mensagem": f"🗑️ Produto {id} removido."})
     return jsonify({"erro": "Produto não encontrado."}), 404
 
-@app.route("/banco_produtos")
-def banco_produtos():
+
+def popular_banco_se_vazio():
+    conexao, cursor = conectar_banco()
+    cursor.execute("SELECT COUNT(*) FROM produtos")
+    total = cursor.fetchone()[0]
+
+    if total > 0:
+        conexao.close()
+        return # caso já tenha produto cadastrado não fazer nada.
+
     produtos = [
         # lanches
         ("Whopper", 35.90, "lanches", "Whopper.png"),
@@ -129,21 +137,19 @@ def banco_produtos():
         ("Maionese Temperada", 2.90, "molhos", "Sache_Maionese_Temperada.png"),
     ]
 
-    conexao, cursor = conectar_banco()
-    inseridos = 0
+    
     for nome, preco, categoria, imagem in produtos:
         try:
             cursor.execute(
                 "INSERT INTO produtos (nome, preco, categoria, imagem) VALUES (?, ?, ?, ?)",
                 (nome, preco, categoria, imagem)
             )
-            inseridos += 1
         except sqlite3.IntegrityError:
             pass
+
     conexao.commit()
     conexao.close()
-    return jsonify({"mensagem": f"{inseridos} produtos cadastrados com sucesso!"})
-
+    print("Banco populado automaticamente!")
 
 @app.route("/pedido", methods=["POST"])
 def finalizar_pedido():
@@ -187,4 +193,5 @@ def finalizar_pedido():
     }), 201
 if __name__ == "__main__":
     conectar_banco()
+    popular_banco_se_vazio()
     app.run(debug=True)
