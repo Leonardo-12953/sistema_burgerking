@@ -22,6 +22,7 @@ def conectar_banco():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cliente TEXT,
             total REAL NOT NULL,
             data_hora TEXT NOT NULL
             )
@@ -151,9 +152,57 @@ def popular_banco_se_vazio():
     conexao.close()
     print("Banco populado automaticamente!")
 
+def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
+    largura = 42 # caracteres para simular 80mm
+
+    linhas = []
+    linhas.append("BURGER KING".center(largura))
+    linhas.append("Sistema de Drive-Thru".center(largura))
+    linhas.append("-" * largura)
+
+    linhas.append("")
+    linhas.append(f"Pedido #{pedido_id}".center(largura))
+    if cliente:
+        linhas.append("")
+        linhas.append(f"{cliente.upper()}".center(largura))
+        linhas.append("")
+    linhas.append(data_hora.center(largura))
+    linhas.append("-" * largura)
+
+    for item in itens:
+        nome = f"{item['quantidade']}x {item['nome']}"
+        preco_total = item['preco'] * item['quantidade']
+        preco_str = f"{preco_total:.2f}".replace('.', ',')
+        espacos = largura - len(nome) - len(preco_str)
+        linhas.append(nome + " " * espacos + preco_str)
+
+    linhas.append("-" * largura)
+
+    subtotal_str = f"{subtotal:.2f}".replace('.', ',')
+    taxa_str = f"{taxa:.2f}".replace('.', ',')
+    total_str = f"R$ {total:.2f}".replace('.', ',')
+
+    linhas.append("Subtotal" + " " * (largura - 8 - len(subtotal_str)) + subtotal_str)
+    linhas.append("Taxa servico" + " " * (largura - 12 - len(taxa_str)) + taxa_str)
+    linhas.append("TOTAL" + " " * (largura - 5 - len(total_str)) + total_str)
+    linhas.append("-" * largura)
+
+    linhas.append("Obrigado pela preferencia!".center(largura))
+    linhas.append("Volte sempre".center(largura))
+
+    texto_cupom = "\n".join(linhas)
+
+    nome_arquivo = f"notas_pedidos/pedido_{pedido_id}.txt"
+    with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(texto_cupom)
+
+    return nome_arquivo
+
 @app.route("/pedido", methods=["POST"])
 def finalizar_pedido():
-    itens = request.get_json()
+    dados = request.get_json()
+    cliente = dados.get("cliente", "")
+    itens = dados.get("itens", [])
 
     # verifica se o carinho não está vazio
     if not itens:
@@ -172,8 +221,8 @@ def finalizar_pedido():
 
     # salva o pedido na tabela pedidos
     cursor.execute(
-        "INSERT INTO pedidos (total, data_hora) VALUES (?, ?)",
-        (total, data_hora)
+        "INSERT INTO pedidos (cliente, total, data_hora) VALUES (?, ?, ?)",
+        (cliente, total, data_hora)
     )
     pedido_id = cursor.lastrowid # pega o id do pedido recém criado
 
@@ -186,6 +235,8 @@ def finalizar_pedido():
     
     conexao.commit()
     conexao.close()
+
+    gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora)
 
     return jsonify({
         "mensagem": f"Pedido #{pedido_id} finalizado com sucesso!",

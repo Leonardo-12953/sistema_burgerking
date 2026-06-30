@@ -48,12 +48,15 @@ sistema_burgerking/
 - [x] Cálculo de subtotal e total
 - [x] Botão de finalizar pedido (salva no banco de dados)
 - [x] Banco de dados populado automaticamente na primeira execução
+- [x] Gerar arquivo .txt para simular que está sendo impresso na impressora térmica. largura 80mm, altura automática
+- [x] Adicionar Nome do cliente na nota (opcional).
 
 ---
 
 ## Próximos passos
 
-- [ ] Gerar arquivo .txt para simular que está sendo impresso na impressora térmica. largura 80mm, altura automática
+- [ ] Criar sistema de pagamentos, simulação
+- [ ] Criar função cancelar pedido, e zerar as seleções.
 - [ ] Histórico / relatório de vendas
 
 > Sempre que fizer alguma dessas tarefas, não esquecer de atualizar o README

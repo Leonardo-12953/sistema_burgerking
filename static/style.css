@@ -195,3 +195,19 @@ body {
     color: #fff;
     font-weight: bold;
 }
+
+.campo-nome input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: #2e2e2e;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 4px;
+}
+
+.campo-nome input::placeholder {
+    color: #888;
+}

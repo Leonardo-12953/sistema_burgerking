@@ -124,18 +124,24 @@ btn_pagar.addEventListener('click', async () => {
         return;
     }
 
+    const nomeCliente = document.getElementById('nome-cliente').value.trim();
+
     const resposta = await fetch('/pedido', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(pedido)
+        body: JSON.stringify({
+            cliente: nomeCliente,
+            itens: pedido
+        })
     });
 
     const dados = await resposta.json();
 
     if (resposta.ok) {
         pedido = [];
+        document.getElementById('nome-cliente').value = '';
         atualizarPainel();
         alert(`${dados.mensagem}\nTotal: R$ ${dados.total.toFixed(2).replace('.', ',')}`);
     } else {
