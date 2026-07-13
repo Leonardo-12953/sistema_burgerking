@@ -1,0 +1,49 @@
+     BK BRASIL OPERACAO E ASSESSORIA      
+            A RESTAURANTES S.A            
+     AV. PAULISTA, 1000 - BELA VISTA      
+         SAO PAULO, SP 01310-100          
+         CNPJ: 13.574.594/0001-89         
+      IE: 142405765111  IM: 0012345       
+------------------------------------------
+         Auxiliar da Nota Fiscal          
+         de Consumidor Eletronica         
+------------------------------------------
+                Pedido #2                 
+           13/07/2026 15:02:08            
+------------------------------------------
+DESCR              QTD    VL UNIT    TOTAL
+------------------------------------------
+Whopper Duplo
+  1.000un                   42,90    42,90
+Suco de Laranja
+  1.000un                   11,90    11,90
+Água
+  1.000un                     5,90    5,90
+Casquinha Baunilha
+  1.000un                     6,90    6,90
+Maionese Temperada
+  1.000un                     2,90    2,90
+------------------------------------------
+QTD. TOTAL DE ITENS                      5
+VALOR TOTAL RS                    RS 70,50
+DESCONTO                           RS 0,00
+TAXA DE SERVICO                    RS 5,00
+VALOR A PAGAR                     RS 75,50
+------------------------------------------
+FORMA DE PAGAMENTO              Valor Pago
+CARTAO DEBITO                     RS 75,50
+------------------------------------------
+PAINEL DE RETIRADA - VOCE SERA CHAMADO POR:
+
+             *** BERTRANO ***             
+
+------------------------------------------
+      Valor aproximado dos tributos       
+deste cupom                       RS 15,65
+Fed = RS 2,96 (4,20%)Est = RS 12,69 (18,00%)
+------------------------------------------
+           CONSUMIDOR: BERTRANO           
+------------------------------------------
+
+        Obrigado pela preferencia!        
+              Volte sempre!               

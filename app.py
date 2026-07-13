@@ -153,45 +153,97 @@ def popular_banco_se_vazio():
     print("Banco populado automaticamente!")
 
 def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
-    largura = 42 # caracteres para simular 80mm
+    L = 42 # caracteres para simular 80mm
+
+    def centralizar(texto):
+        return texto.center(L)
+
+    def linha_tracejada():
+        return "-" * L
+
+    def coluna(esquerda, direita):
+        espacos = L - len(esquerda) - len(direita)
+        return esquerda + " " * espacos + direita
 
     linhas = []
-    linhas.append("BURGER KING".center(largura))
-    linhas.append("Sistema de Drive-Thru".center(largura))
-    linhas.append("-" * largura)
 
-    linhas.append("")
-    linhas.append(f"Pedido #{pedido_id}".center(largura))
-    if cliente:
-        linhas.append("")
-        linhas.append(f"{cliente.upper()}".center(largura))
-        linhas.append("")
-    linhas.append(data_hora.center(largura))
-    linhas.append("-" * largura)
+    # cabeçalho
+    linhas.append(centralizar("BK BRASIL OPERACAO E ASSESSORIA"))
+    linhas.append(centralizar("A RESTAURANTES S.A"))
+    linhas.append(centralizar("AV. PAULISTA, 1000 - BELA VISTA"))
+    linhas.append(centralizar("SAO PAULO, SP 01310-100"))
+    linhas.append(centralizar("CNPJ: 13.574.594/0001-89"))
+    linhas.append(centralizar("IE: 142405765111  IM: 0012345"))
+    linhas.append(linha_tracejada())
+    linhas.append(centralizar("Auxiliar da Nota Fiscal"))
+    linhas.append(centralizar("de Consumidor Eletronica"))
+    linhas.append(linha_tracejada())
 
+    # pedido
+    linhas.append(centralizar(f"Pedido #{pedido_id}"))
+    linhas.append(centralizar(data_hora))
+    linhas.append(linha_tracejada())
+
+    # colunas dos itens
+    linhas.append(coluna("DESCR", "QTD    VL UNIT    TOTAL"))
+    linhas.append(linha_tracejada())
+
+    total_itens = 0
     for item in itens:
-        nome = f"{item['quantidade']}x {item['nome']}"
-        preco_total = item['preco'] * item['quantidade']
-        preco_str = f"{preco_total:.2f}".replace('.', ',')
-        espacos = largura - len(nome) - len(preco_str)
-        linhas.append(nome + " " * espacos + preco_str)
+        total_itens += item['quantidade']
+        nome = item['nome'][:18]
+        qtd = f"{item['quantidade']}.000un"
+        vl_unit = f"{item['preco']:.2f}".replace('.', ',')
+        vl_total = f"{item['preco'] * item['quantidade']:.2f}".replace('.', ',')
+        linhas.append(nome)
+        linhas.append(coluna(f"  {qtd}", f"{vl_unit}    {vl_total}"))
 
-    linhas.append("-" * largura)
+    linhas.append(linha_tracejada())
 
-    subtotal_str = f"{subtotal:.2f}".replace('.', ',')
-    taxa_str = f"{taxa:.2f}".replace('.', ',')
-    total_str = f"R$ {total:.2f}".replace('.', ',')
+    # totais
+    linhas.append(coluna("QTD. TOTAL DE ITENS", str(total_itens)))
+    linhas.append(coluna("VALOR TOTAL RS", f"RS {subtotal:.2f}".replace('.', ',')))
+    linhas.append(coluna("DESCONTO", "RS 0,00"))
+    linhas.append(coluna("TAXA DE SERVICO", f"RS {taxa:.2f}".replace('.', ',')))
+    linhas.append(coluna("VALOR A PAGAR", f"RS {total:.2f}".replace('.', ',')))
+    linhas.append(linha_tracejada())
 
-    linhas.append("Subtotal" + " " * (largura - 8 - len(subtotal_str)) + subtotal_str)
-    linhas.append("Taxa servico" + " " * (largura - 12 - len(taxa_str)) + taxa_str)
-    linhas.append("TOTAL" + " " * (largura - 5 - len(total_str)) + total_str)
-    linhas.append("-" * largura)
+    # forma de pagamento (ficticia por enquanto)
+    linhas.append(coluna("FORMA DE PAGAMENTO", "Valor Pago"))
+    linhas.append(coluna("CARTAO DEBITO", f"RS {total:.2f}".replace('.', ',')))
+    linhas.append(linha_tracejada())
 
-    linhas.append("Obrigado pela preferencia!".center(largura))
-    linhas.append("Volte sempre".center(largura))
+    # painel de retirada
+    linhas.append(centralizar("PAINEL DE RETIRADA - VOCE SERA CHAMADO POR:"))
+    linhas.append("")
+    nome_painel = cliente.upper() if cliente else "CONSUMIDOR"
+    linhas.append(centralizar(f"*** {nome_painel} ***"))
+    linhas.append("")
+    linhas.append(linha_tracejada())
 
+    # tributos
+    trib_fed = subtotal * 0.0420
+    trib_est = subtotal * 0.1800
+    trib_total = trib_fed + trib_est
+    linhas.append(centralizar("Valor aproximado dos tributos"))
+    linhas.append(coluna("deste cupom", f"RS {trib_total:.2f}".replace('.', ',')))
+    linhas.append(coluna(f"Fed = RS {trib_fed:.2f} (4,20%)".replace('.', ','),
+                         f"Est = RS {trib_est:.2f} (18,00%)".replace('.', ',')))
+    linhas.append(linha_tracejada())
+
+    # consumidor
+    consumidor = cliente.upper() if cliente else "NAO INFORMADO"
+    linhas.append(centralizar(f"CONSUMIDOR: {consumidor}"))
+    linhas.append(linha_tracejada())
+
+    # rodapé
+    linhas.append("")
+    linhas.append(centralizar("Obrigado pela preferencia!"))
+    linhas.append(centralizar("Volte sempre!"))
+    linhas.append("")
+
+    # salva o arquivo
     texto_cupom = "\n".join(linhas)
-
     nome_arquivo = f"notas_pedidos/pedido_{pedido_id}.txt"
     with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
         arquivo.write(texto_cupom)
