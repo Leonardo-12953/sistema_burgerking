@@ -23,6 +23,8 @@ def conectar_banco():
         CREATE TABLE IF NOT EXISTS pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             cliente TEXT,
+            metodo_pagamento TEXT DEFAULT 'NAO INFORMADO',
+            status TEXT DEFAULT 'Pendente',
             total REAL NOT NULL,
             data_hora TEXT NOT NULL
             )
@@ -152,7 +154,7 @@ def popular_banco_se_vazio():
     conexao.close()
     print("Banco populado automaticamente!")
 
-def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
+def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora, metodo_pagamento):
     L = 42 # caracteres para simular 80mm
 
     def centralizar(texto):
@@ -202,15 +204,15 @@ def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
 
     # totais
     linhas.append(coluna("QTD. TOTAL DE ITENS", str(total_itens)))
-    linhas.append(coluna("VALOR TOTAL RS", f"RS {subtotal:.2f}".replace('.', ',')))
-    linhas.append(coluna("DESCONTO", "RS 0,00"))
-    linhas.append(coluna("TAXA DE SERVICO", f"RS {taxa:.2f}".replace('.', ',')))
-    linhas.append(coluna("VALOR A PAGAR", f"RS {total:.2f}".replace('.', ',')))
+    linhas.append(coluna("VALOR TOTAL R$", f"R$ {subtotal:.2f}".replace('.', ',')))
+    linhas.append(coluna("DESCONTO", "R$ 0,00"))
+    linhas.append(coluna("TAXA DE SERVICO", f"R$ {taxa:.2f}".replace('.', ',')))
+    linhas.append(coluna("VALOR A PAGAR", f"R$ {total:.2f}".replace('.', ',')))
     linhas.append(linha_tracejada())
 
     # forma de pagamento (ficticia por enquanto)
     linhas.append(coluna("FORMA DE PAGAMENTO", "Valor Pago"))
-    linhas.append(coluna("CARTAO DEBITO", f"RS {total:.2f}".replace('.', ',')))
+    linhas.append(coluna(metodo_pagamento.upper(), f"R$ {total:.2f}".replace('.', ',')))
     linhas.append(linha_tracejada())
 
     # painel de retirada
@@ -226,9 +228,9 @@ def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
     trib_est = subtotal * 0.1800
     trib_total = trib_fed + trib_est
     linhas.append(centralizar("Valor aproximado dos tributos"))
-    linhas.append(coluna("deste cupom", f"RS {trib_total:.2f}".replace('.', ',')))
-    linhas.append(coluna(f"Fed = RS {trib_fed:.2f} (4,20%)".replace('.', ','),
-                         f"Est = RS {trib_est:.2f} (18,00%)".replace('.', ',')))
+    linhas.append(coluna("deste cupom", f"R$ {trib_total:.2f}".replace('.', ',')))
+    linhas.append(coluna(f"Fed = R$ {trib_fed:.2f} (4,20%)".replace('.', ','),
+                         f"Est = R$ {trib_est:.2f} (18,00%)".replace('.', ',')))
     linhas.append(linha_tracejada())
 
     # consumidor
@@ -250,50 +252,71 @@ def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora):
 
     return nome_arquivo
 
+def simular_pagamento(metodo):
+    # Aqui vai entrar a API da maquina de cartões futuramente.
+    # Por hora deixei todas as transações aprovarem.
+    return True
+
 @app.route("/pedido", methods=["POST"])
 def finalizar_pedido():
     dados = request.get_json()
     cliente = dados.get("cliente", "")
+    metodo_pagamento = dados.get("metodo_pagamento", "NAO INFORMADO")
     itens = dados.get("itens", [])
 
-    # verifica se o carinho não está vazio
     if not itens:
         return jsonify({"erro": "Carrinho vazio!"}), 400
 
-    # calcula o total
     subtotal = sum(item["preco"] * item["quantidade"] for item in itens)
     taxa = 5.00
     total = subtotal + taxa
 
-    # pega a data e hora atual
     from datetime import datetime
     data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     conexao, cursor = conectar_banco()
 
-    # salva o pedido na tabela pedidos
+    # salva o pedido como Pendente
     cursor.execute(
-        "INSERT INTO pedidos (cliente, total, data_hora) VALUES (?, ?, ?)",
-        (cliente, total, data_hora)
+        "INSERT INTO pedidos (cliente, metodo_pagamento, status, total, data_hora) VALUES (?, ?, ?, ?, ?)",
+        (cliente, metodo_pagamento, "Pendente", total, data_hora)
     )
-    pedido_id = cursor.lastrowid # pega o id do pedido recém criado
+    pedido_id = cursor.lastrowid
 
-    # salva cada item na tabela itens_pedido
     for item in itens:
         cursor.execute(
             "INSERT INTO itens_pedido (pedido_id, produto_id, nome, preco, quantidade) VALUES (?, ?, ?, ?, ?)",
             (pedido_id, item["id"], item["nome"], item["preco"], item["quantidade"])
         )
-    
-    conexao.commit()
-    conexao.close()
 
-    gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora)
+    # simula processamento do pagamento
+    sucesso = simular_pagamento(metodo_pagamento)
 
-    return jsonify({
-        "mensagem": f"Pedido #{pedido_id} finalizado com sucesso!",
-        "total": total
-    }), 201
+    if sucesso:
+        cursor.execute(
+            "UPDATE pedidos SET status = ? WHERE id = ?",
+            ("Pago", pedido_id)
+        )
+        conexao.commit()
+        conexao.close()
+
+        gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora, metodo_pagamento)
+
+        return jsonify({
+            "mensagem": f"Pedido #{pedido_id} finalizado com sucesso!",
+            "total": total
+        }), 201
+    else:
+        cursor.execute(
+            "UPDATE pedidos SET status = ? WHERE id = ?",
+            ("Recusado", pedido_id)
+        )
+        conexao.commit()
+        conexao.close()
+
+        return jsonify({"erro": "Pagamento recusado!"}), 402
+
+
 if __name__ == "__main__":
     conectar_banco()
     popular_banco_se_vazio()

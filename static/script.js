@@ -113,6 +113,18 @@ document.getElementById('busca').addEventListener('input', async function () {
     montarGrid(filtrados);
 });
 
+let metodoPagamento = null;
+
+const botoesMetodo = document.querySelectorAll('.btn-metodo');
+
+botoesMetodo.forEach(botao => {
+    botao.addEventListener('click', () => {
+        botoesMetodo.forEach(b => b.classList.remove('selecionado'));
+        botao.classList.add('selecionado');
+        metodoPagamento = botao.dataset.metodo;
+    });
+});
+
 
 // botão finalizar
 
@@ -121,6 +133,11 @@ btn_pagar.addEventListener('click', async () => {
     
     if (pedido.length === 0) {
         alert('Carrinho vazio!');
+        return;
+    }
+
+    if (!metodoPagamento) {
+        alert('Selecione uma forma de pagamento!');
         return;
     }
 
@@ -133,6 +150,7 @@ btn_pagar.addEventListener('click', async () => {
         },
         body: JSON.stringify({
             cliente: nomeCliente,
+            metodo_pagamento: metodoPagamento,
             itens: pedido
         })
     });
@@ -141,6 +159,8 @@ btn_pagar.addEventListener('click', async () => {
 
     if (resposta.ok) {
         pedido = [];
+        metodoPagamento = null;
+        botoesMetodo.forEach(b => b.classList.remove('selecionado'));
         document.getElementById('nome-cliente').value = '';
         atualizarPainel();
         alert(`${dados.mensagem}\nTotal: R$ ${dados.total.toFixed(2).replace('.', ',')}`);
