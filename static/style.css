@@ -211,3 +211,31 @@ body {
 .campo-nome input::placeholder {
     color: #888;
 }
+
+.metodos-pagamento {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn-metodo {
+    background-color: #2e2e2e;
+    color: #ddd;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-metodo:hover {
+    border-color: #D62300;
+}
+
+.btn-metodo.selecionado {
+    background-color: #D62300;
+    color: #fff;
+    font-weight: bold;
+    border-color: #D62300;
+}

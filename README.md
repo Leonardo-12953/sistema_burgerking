@@ -18,6 +18,7 @@ Desenvolvido com Python, Flask, HTML, CSS e JavaScript.
 sistema_burgerking/
 ├── app.py              # Backend Flask com as rotas da API
 ├── drive_thru.db       # Banco de dados SQLite (gerado automaticamente)
+├── notas_pedidos/      # Cupons gerados auto (ignorado pelo git)
 ├── templates/
 │   └── index.html      # Interface principal do PDV
 ├── static/
@@ -41,21 +42,24 @@ sistema_burgerking/
   - [x] Listar produtos
   - [x] Remover produto
 - [x] Estrutura do frontend (HTML base)
-- [x] Pac de imagens do cardápio
+- [x] Pack de imagens do cardápio
 - [x] Estilização completa do PDV (style.css)
 - [x] Grid de produtos com cards clicáveis (script.js)
+- [x] Filtro de produtos por categoria
 - [x] Carrinho de pedidos (adicionar/remover itens)
 - [x] Cálculo de subtotal e total
-- [x] Botão de finalizar pedido (salva no banco de dados)
+- [x] Simulação de processamento de pagamento
+- [x] Botão de finalizar pedido (salva no banco com status Pendente/Pago)
+- [x] Nome do cliente no pedido (opcional)
+- [x] Geração de cupom .txt simulando impressora térmica 80mm
 - [x] Banco de dados populado automaticamente na primeira execução
-- [x] Gerar arquivo .txt para simular que está sendo impresso na impressora térmica. largura 80mm, altura automática
-- [x] Adicionar Nome do cliente na nota (opcional).
+- [x] Seleção de forma de pagamento (Débito, Crédito, PIX, Dinheiro)
+
 
 ---
 
 ## Próximos passos
 
-- [ ] Criar sistema de pagamentos, simulação
 - [ ] Criar função cancelar pedido, e zerar as seleções.
 - [ ] Histórico / relatório de vendas
 
