@@ -62,6 +62,7 @@ sistema_burgerking/
 
 - [ ] Criar função cancelar pedido, e zerar as seleções.
 - [ ] Histórico / relatório de vendas
+- [ ] Imprimir ou mostrar na tela da cozinha o pedido, no caso o que precisa ser preparado.
 
 > Sempre que fizer alguma dessas tarefas, não esquecer de atualizar o README
 
