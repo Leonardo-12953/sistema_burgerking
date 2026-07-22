@@ -170,4 +170,38 @@ btn_pagar.addEventListener('click', async () => {
 });
 
 
+// cancelar e zerar carrinho
+
+function cancelarPedido() {
+    
+    if (pedido.length === 0) {
+        alert("O carrinho já está vazio!");
+        return;
+    }
+
+    const confirmar = confirm("Tem certeza de que deseja cancelar o pedido e limpar todos os itens?");
+
+    if (confirmar) {
+        zerarSelecoes();
+        alert("Pedido cancelado e tela limpa com sucesso!");
+    }
+}
+
+function zerarSelecoes() {
+    // 1. Zera o array de itens do pedido
+    pedido = [];
+
+    
+    const inputNome = document.getElementById('nome-cliente');
+    if (inputNome) inputNome.value = '';
+
+    
+    metodoPagamento = null;
+    botoesMetodo.forEach(b => b.classList.remove('selecionado'));
+
+    
+    atualizarPainel();
+}
+
+
 carregarProdutos();

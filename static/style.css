@@ -148,7 +148,7 @@ body {
     color: #fff;
 }
 
-.btn-pagar {
+.btn-pagar, .btn-cancelar {
     background-color: #D62300;
     color: #fff;
     border: none;
@@ -160,7 +160,7 @@ body {
     transition: background 0.2s;
 }
 
-.btn-pagar:hover {
+.btn-pagar:hover, .btn-cancelar:hover {
     background-color: #ff2a00;
 }
 

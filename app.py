@@ -317,6 +317,33 @@ def finalizar_pedido():
         return jsonify({"erro": "Pagamento recusado!"}), 402
 
 
+@app.route("/pedidos/<int:pedido_id>/cancelar", methods=["POST"])
+def cancelar_pedido_salvo(pedido_id):
+    conexao, cursor = conectar_banco()
+    
+    cursor.execute("SELECT status FROM pedidos WHERE id = ?", (pedido_id,))
+    pedido = cursor.fetchone()
+
+    if not pedido:
+        conexao.close()
+        return jsonify({"erro": "Pedido não encontrado!"}), 404
+
+    cursor.execute(
+        "UPDATE pedidos SET status = 'Cancelado' WHERE id = ?",
+        (pedido_id,)
+    )
+    conexao.commit()
+    conexao.close()
+
+    # (Futuro) Aqui entrará a chamada para a API de Pagamento estorno
+    # irei tratar melhor essa questão do estorno no futuro, possíveis erros e pendências.
+
+    return jsonify({
+        "mensagem": f"Pedido #{pedido_id} foi cancelado e estornado com sucesso!"
+    }), 200
+
+
+
 if __name__ == "__main__":
     conectar_banco()
     popular_banco_se_vazio()

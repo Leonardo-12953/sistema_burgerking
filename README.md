@@ -54,15 +54,17 @@ sistema_burgerking/
 - [x] Geração de cupom .txt simulando impressora térmica 80mm
 - [x] Banco de dados populado automaticamente na primeira execução
 - [x] Seleção de forma de pagamento (Débito, Crédito, PIX, Dinheiro)
+- [x] Botão de cancelar carrinho atual e zerar seleções da tela
 
 
 ---
 
 ## Próximos passos
 
-- [ ] Criar função cancelar pedido, e zerar as seleções.
-- [ ] Histórico / relatório de vendas
-- [ ] Imprimir ou mostrar na tela da cozinha o pedido, no caso o que precisa ser preparado.
+- [ ] Histórico e Gerenciador de Pedidos (listar, buscar por ID e filtrar por status)
+- [ ] Módulo de Cancelamento/Estorno de pedidos já pagos no banco (com atualização de status para `Cancelado`)
+- [ ] Relatório visual / Dashboard de vendas (faturamento, total por forma de pagamento e cancelamentos)
+- [ ] Painel da Cozinha / KDS (exibir pedidos pagos que precisam ser preparados em tempo real)
 
 > Sempre que fizer alguma dessas tarefas, não esquecer de atualizar o README
 

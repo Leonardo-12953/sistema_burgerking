@@ -8,8 +8,8 @@
          Auxiliar da Nota Fiscal          
          de Consumidor Eletronica         
 ------------------------------------------
-                Pedido #1                 
-           21/07/2026 21:47:14            
+                Pedido #3                 
+           21/07/2026 09:44:20            
 ------------------------------------------
 DESCR              QTD    VL UNIT    TOTAL
 ------------------------------------------
@@ -17,30 +17,30 @@ Whopper
   1.000un                   35,90    35,90
 Whopper Duplo
   1.000un                   42,90    42,90
-Whopper Rodeio
-  1.000un                   38,90    38,90
-Big King
-  1.000un                   32,90    32,90
+Coca-Cola Zero
+  1.000un                     9,90    9,90
+Fanta Laranja
+  1.000un                     9,90    9,90
 ------------------------------------------
 QTD. TOTAL DE ITENS                      4
-VALOR TOTAL R$                   R$ 150,60
+VALOR TOTAL R$                    R$ 98,60
 DESCONTO                           R$ 0,00
 TAXA DE SERVICO                    R$ 5,00
-VALOR A PAGAR                    R$ 155,60
+VALOR A PAGAR                    R$ 103,60
 ------------------------------------------
 FORMA DE PAGAMENTO              Valor Pago
-DINHEIRO                         R$ 155,60
+DINHEIRO                         R$ 103,60
 ------------------------------------------
 PAINEL DE RETIRADA - VOCE SERA CHAMADO POR:
 
-           *** TESTANDO 03 ***            
+               *** LEO ***                
 
 ------------------------------------------
       Valor aproximado dos tributos       
-deste cupom                       R$ 33,43
-Fed = R$ 6,33 (4,20%)Est = R$ 27,11 (18,00%)
+deste cupom                       R$ 21,89
+Fed = R$ 4,14 (4,20%)Est = R$ 17,75 (18,00%)
 ------------------------------------------
-         CONSUMIDOR: TESTANDO 03          
+             CONSUMIDOR: LEO              
 ------------------------------------------
 
         Obrigado pela preferencia!        
