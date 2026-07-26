@@ -25,27 +25,20 @@ function montarGrid(produtos) {
     });
 }
 
-// FILTRO POR CATEGORIA
-
 const botoesCategoria = document.querySelectorAll('.cat-btn');
 
 botoesCategoria.forEach(botao => {
     botao.addEventListener('click', async () => {
 
-        // 1. Remove a classe "ativo" de todos os botões
         botoesCategoria.forEach(b => b.classList.remove('ativo'));
 
-        // 2. Adiciona "ativo" só no botão clicado
         botao.classList.add('ativo');
 
-        // 3. Busca a categoria escolhida
         const categoria = botao.dataset.categoria;
 
-        // 4. Busca todos os produtos da API
         const resposta = await fetch('/produtos');
         const produtos = await resposta.json();
 
-        // 5. Filtra (ou mostra todos)
         const filtrados = categoria === 'todos'
             ? produtos
             : produtos.filter(p => p.categoria === categoria);
@@ -53,8 +46,6 @@ botoesCategoria.forEach(botao => {
         montarGrid(filtrados);
     });
 });
-
-// gerencia 
 
 function adicionarAoPedido(produto) {
     const existente = pedido.find(item => item.id === produto.id);
@@ -103,8 +94,6 @@ function atualizarPainel() {
     totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
-// busca em tempo real
-
 document.getElementById('busca').addEventListener('input', async function () {
     const termo = this.value.toLowerCase();
     const resposta = await fetch('/produtos');
@@ -124,9 +113,6 @@ botoesMetodo.forEach(botao => {
         metodoPagamento = botao.dataset.metodo;
     });
 });
-
-
-// botão finalizar
 
 const btn_pagar = document.getElementById('btn-pagar');
 btn_pagar.addEventListener('click', async () => {
@@ -169,9 +155,6 @@ btn_pagar.addEventListener('click', async () => {
     }
 });
 
-
-// cancelar e zerar carrinho
-
 function cancelarPedido() {
     
     if (pedido.length === 0) {
@@ -188,20 +171,86 @@ function cancelarPedido() {
 }
 
 function zerarSelecoes() {
-    // 1. Zera o array de itens do pedido
     pedido = [];
 
-    
     const inputNome = document.getElementById('nome-cliente');
     if (inputNome) inputNome.value = '';
 
-    
     metodoPagamento = null;
     botoesMetodo.forEach(b => b.classList.remove('selecionado'));
 
-    
     atualizarPainel();
 }
 
+function abrirHistorico() {
+    document.getElementById('modal-historico').style.display = 'flex';
+    carregarHistorico();
+}
+
+function fecharHistorico() {
+    document.getElementById('modal-historico').style.display = 'none';
+}
+
+async function carregarHistorico() {
+    const status = document.getElementById('filtro-status').value;
+    const resposta = await fetch(`/pedidos?status=${status}`);
+    const pedidos = await resposta.json();
+
+    const conteiner = document.getElementById('lista-historico');
+    conteiner.innerHTML = '';
+
+    if (pedidos.length === 0) {
+        conteiner.innerHTML = '<p>Nenhum pedido encontrado.</p>';
+        return;
+    }
+
+    for (const p of pedidos) {
+        
+        const resItens = await fetch(`/pedidos/${p.id}/itens`);
+        const itens = await resItens.json();
+
+        const textoItens = itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ');
+
+        const card = document.createElement('div');
+        card.classList.add('card-historico');
+        
+        let classeStatus = 'status-pago';
+        if (p.status === 'Cancelado') classeStatus = 'status-cancelado';
+        if (p.status === 'Pendente') classeStatus = 'status-pendente';
+
+        card.innerHTML = `
+            <div class="historico-header">
+                <strong>Pedido #${p.id}</strong>
+                <span class="badge ${classeStatus}">${p.status}</span>
+            </div>
+            <div class="historico-corpo">
+                <p><strong>Cliente:</strong> ${p.cliente || 'Consumidor'}</p>
+                <p><strong>Data/Hora:</strong> ${p.data_hora}</p>
+                <p><strong>Pagamento:</strong> ${p.metodo_pagamento}</p>
+                <p><strong>Itens:</strong> ${textoItens}</p>
+                <p><strong>Total:</strong> R$ ${p.total.toFixed(2).replace('.', ',')}</p>
+            </div>
+            ${p.status === 'Pago' ? `<button onclick="cancelarPedidoNoBanco(${p.id})" class="btn-estornar">Estornar Pedido</button>` : ''}
+        `;
+
+        conteiner.appendChild(card);
+    }
+}
+
+async function cancelarPedidoNoBanco(id) {
+    const confirmar = confirm(`Tem certeza que deseja estornar o pedido #${id}?`);
+    if (!confirmar) return;
+
+    const resposta = await fetch(`/pedidos/${id}/cancelar`, {
+        method: 'POST'
+    });
+
+    if (resposta.ok) {
+        alert(`Pedido #${id} estornado com sucesso!`);
+        carregarHistorico();
+    } else {
+        alert('Erro ao estornar o pedido.');
+    }
+}
 
 carregarProdutos();

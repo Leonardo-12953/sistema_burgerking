@@ -343,6 +343,31 @@ def cancelar_pedido_salvo(pedido_id):
     }), 200
 
 
+# rota pra buscar pedidos por status
+@app.route("/pedidos", methods=["GET"])
+def listar_pedidos():
+    status = request.args.get("status")
+    conexao, cursor = conectar_banco()
+
+    if status and status != "todos":
+        cursor.execute("SELECT * FROM pedidos WHERE status = ? ORDER BY id DESC", (status,))
+    else:
+        cursor.execute("SELECT * FROM pedidos ORDER BY id DESC")
+
+    pedidos = [dict(row) for row in cursor.fetchall()]
+    conexao.close()
+    return jsonify(pedidos)
+
+
+# buscar itens especificos
+@app.route("/pedidos/<int:pedido_id>/itens", methods=["GET"])
+def obter_itens_pedido(pedido_id):
+    conexao, cursor = conectar_banco()
+    cursor.execute("SELECT * FROM itens_pedido WHERE pedido_id = ?", (pedido_id,))
+    itens = [dict(row) for row in cursor.fetchall()]
+    conexao.close()
+    return jsonify(itens)
+
 
 if __name__ == "__main__":
     conectar_banco()

@@ -1,7 +1,7 @@
 #  Burger King PDV - Sistema de Ponto de Venda
 
 Projeto pessoal de portfólio que simula o sistema de PDV (Ponto de Venda) do Burger King.  
-Desenvolvido com Python, Flask, HTML, CSS e JavaScript.
+Desenvolvido com Python, Flask, HTML, CSS, SQLite e JavaScript.
 
 ---
 
@@ -55,16 +55,22 @@ sistema_burgerking/
 - [x] Banco de dados populado automaticamente na primeira execução
 - [x] Seleção de forma de pagamento (Débito, Crédito, PIX, Dinheiro)
 - [x] Botão de cancelar carrinho atual e zerar seleções da tela
+- [x] Módulo de Cancelamento/Estorno de pedidos já pagos no banco (com atualização de status para `Cancelado`)
 
 
 ---
 
 ## Próximos passos
-
-- [ ] Histórico e Gerenciador de Pedidos (listar, buscar por ID e filtrar por status)
+- [/] Histórico e Gerenciador de Pedidos:
+  - [x] Listar pedidos e filtrar por status (Pago, Pendente, Cancelado)
+  - [ ] Campo de busca por ID do pedido
 - [ ] Módulo de Cancelamento/Estorno de pedidos já pagos no banco (com atualização de status para `Cancelado`)
 - [ ] Relatório visual / Dashboard de vendas (faturamento, total por forma de pagamento e cancelamentos)
 - [ ] Painel da Cozinha / KDS (exibir pedidos pagos que precisam ser preparados em tempo real)
+- [ ] Substituir avisos nativos dos navegadores (`alert` / `confirm`):
+  - Implementar modais personalizados via HTML/CSS ou integrar a biblioteca [SweetAlert2].
+  - Motivo: Evitar que o navegador bloqueie pop-ups automaticamente (opção "Não permitir mais mensagens") e melhorar a experiência visual do usuário.
+
 
 > Sempre que fizer alguma dessas tarefas, não esquecer de atualizar o README
 
