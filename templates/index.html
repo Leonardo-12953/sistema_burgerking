@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger King - PDV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+    <div class="container">
+
+         <!-- PAINEL ESQUERDO - PRODUTOS -->
+         <div class="painel-esquerdo">
+            <div class="search-bar">
+                <input type="text" id="busca" placeholder="🔍 Buscar produto...">
+            </div>
+
+            <div class="categorias" id="categorias">
+                <button class="cat-btn ativo" data-categoria="todos">Todos</button>
+                <button class="cat-btn" data-categoria="lanches">Lanches</button>
+                <button class="cat-btn" data-categoria="bebidas">Bebidas</button>
+                <button class="cat-btn" data-categoria="sobremesas">Sobremesas</button>
+                <button class="cat-btn" data-categoria="molhos">Molhos</button>
+            </div>
+
+            <div class="grid-produtos" id="grid-produtos">
+                <!-- Cards gerados pelo script.js -->
+            </div>
+         </div>
+
+         <!-- PAINEL DIREITO - PEDIDO -->
+         <div class="painel-direito">
+            <h2 id="total-itens">0 itens</h2>
+
+            <div class="lista-pedido" id="lista-pedido">
+                <!-- Itens adicionados aparecem aqui -->
+            </div>
+
+            <div class="resumo">
+                <p>Subtotal: <span id="subtotal">R$ 0,00</span></p>
+                <p>Taxa de serviço: <span id="taxa">R$ 0,00</span></p>
+                <hr>
+                <p class="total">Total: <span id="total">R$ 0,00</span></p>
+            </div>
+            <div class="campo-nome">
+                <input type="text" id="nome-cliente" placeholder="Nome do cliente (opcional)">
+            </div>
+            <div class="metodo-pagamento">
+                <button class="btn-metodo" data-metodo="Debito">Débito</button>
+                <button class="btn-metodo" data-metodo="Credito">Crédito</button>
+                <button class="btn-metodo" data-metodo="Pix">PIX</button>
+                <button class="btn-metodo" data-metodo="Dinheiro">Dinheiro</button>
+            </div>
+            <button class="btn-pagar" id="btn-pagar">PAGAR</button>
+            <button type="button" class="btn-cancelar" id="btn-cancelar" onclick="cancelarPedido()">Cancelar Pedido</button>
+            <button class="btn-historico" id="btn-historico" onclick="abrirHistorico()">Histórico de Pedidos</button>
+          </div> 
+
+    </div>
+
+    <div id="modal-historico" class="modal-overlay" style="display: none;">
+        <div class="modal-conteudo">
+        
+            <div class="modal-header">
+                <h2>Histórico de Pedidos</h2>
+                <button onclick="fecharHistorico()" class="btn-fechar">✕</button>
+            </div>
+
+            <div class="filtros-historico">
+                <label>Filtrar por Status:</label>
+                <select id="filtro-status" onchange="carregarHistorico()">
+                    <option value="todos">Todos</option>
+                    <option value="Pago">Pagos</option>
+                    <option value="Pendente">Pendentes</option>
+                    <option value="Cancelado">Cancelados</option>
+                </select>
+            </div>
+
+            <div id="lista-historico" class="lista-historico">
+                
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
