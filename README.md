@@ -12,7 +12,7 @@ Desenvolvido com Python, Flask, HTML, CSS, SQLite e JavaScript.
 - HTML + CSS + JavaScript (frontend)
 
 ---
-
+.
 ##  Estrutura do projeto
 
 sistema_burgerking/
