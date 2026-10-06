@@ -254,7 +254,7 @@ def gerar_cupom(pedido_id, cliente, itens, subtotal, taxa, total, data_hora, met
     # salva o arquivo
     texto_cupom = "\n".join(linhas)
     with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
-            arquivo.write(texto_cupom)
+        arquivo.write(texto_cupom)
 
     return nome_arquivo
 
